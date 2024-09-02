@@ -1,83 +1,64 @@
 import { logger } from "@envy-core/common";
 
-//* The following code demonstrates an example of adhering to the Single Responsibility Principle (SRP) and separation of concerns.
-//* The SRP states that a class should have only one reason to change, meaning it should have only one job.
-//* This code also separates the responsibilities of fetching, displaying, and managing user data into different classes.
+//* The following code demonstrates an example of adhering to the Open/Closed Principle (OCP) in object-oriented design.
+//* The OCP states that software entities (classes, modules, functions, etc.) should be open for extension but closed for modification.
+//* This means you can extend the behavior of a module without modifying its existing code.
 
-//? Interface defining a User
-
-interface User {
-  name: string;
-  email: string;
+//? Define a base interface for a shape
+// This interface enforces a contract for calculating the area and getting the type of shape.
+interface Shape {
+  calculateArea(): number;
+  getType(): string;
 }
 
-//? Service class for fetching and saving user data
-class UserService {
-  //* Simulate fetching user data from an API.
-  async fetchUserData(): Promise<User> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          name: "Navaneeth Vinod",
-          email: "navaneethvinod27@gmail.com",
-        });
-      });
-    });
+//? Rectangle class adhering to OCP
+class Rectangle implements Shape {
+  constructor(private width: number, private height: number) {}
+
+  calculateArea(): number {
+    return this.width * this.height;
   }
 
-  //* Simulate saving user data to a database.
-  async saveUserData(user: User): Promise<void> {
-    logger.info("Saving user to the database...");
-    console.log(user);
-
-    //* Logic to save the user to the database can be implemented here.
+  getType(): string {
+    return "Rectangle";
   }
 }
 
-//? Class responsible for displaying user information
-//* The UserDisplay class handles the presentation logic for user data.
-class UserDisplay {
-  // Log the user's name and email.
-  displayUser(user: User): void {
-    logger.info(`Name ===> ${user.name}`);
-    logger.info(`Email ===> ${user.email}`);
+//? Circle class adhering to OCP
+class Circle implements Shape {
+  constructor(private radius: number) {}
+
+  calculateArea(): number {
+    return Math.PI * Math.pow(this.radius, 2);
+  }
+
+  getType(): string {
+    return "Circle";
   }
 }
 
-//? Class responsible for managing user operations
-//* The ManageUser class coordinates the operations of fetching, displaying, and saving user data.
-class ManageUser {
-  private userService: UserService;
-  private userDisplay: UserDisplay;
+//? Triangle class adhering to OCP
+class Triangle implements Shape {
+  constructor(private base: number, private height: number) {}
 
-  //* Constructor takes instances of UserService and UserDisplay, promoting dependency injection and testability.
-  constructor(userService: UserService, userDisplay: UserDisplay) {
-    this.userService = userService;
-    this.userDisplay = userDisplay;
+  calculateArea(): number {
+    return (this.base * this.height) / 2;
   }
 
-  async initializeUser(): Promise<void> {
-    const user = await this.userService.fetchUserData();
-    this.userDisplay.displayUser(user);
-  }
-
-  async saveUser(user: User): Promise<void> {
-    await this.userService.saveUserData(user);
+  getType(): string {
+    return "Triangle";
   }
 }
 
-//? Example usage of the UserService, UserDisplay, and ManageUser classes.
+//? Example usage of the Shape interface and its implementations.
+// This adheres to OCP as we can add new shapes (e.g., Square, Polygon) without modifying the existing code.
+const shapes: Shape[] = [
+  new Rectangle(10, 20),
+  new Circle(10),
+  new Triangle(10, 20),
+];
 
-(async () => {
-  const userService = new UserService();
-  const userDisplay = new UserDisplay();
-  const manageUser = new ManageUser(userService, userDisplay);
-
-  await manageUser.initializeUser();
-
-  const user: User = {
-    name: "Navaneeth Vinod",
-    email: "navaneethvinod27@gmail.com",
-  };
-  await manageUser.saveUser(user);
-})();
+// Loop through each shape and log its type and area.
+shapes.forEach((shape) => {
+  logger.info(`Area of ${shape.getType()} is ${shape.calculateArea()}`);
+});
