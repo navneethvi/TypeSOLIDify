@@ -4,7 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "srp": "ts-node core/srp.ts",
+    "ocp": "ts-node core/ocp.ts",
+    "lsp": "ts-node core/lsp.ts",
+    "isp": "ts-node core/isp.ts",
+    "dip": "ts-node core/dip.ts"
   },
   "author": "Nv",
   "license": "ISC",
